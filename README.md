@@ -5,7 +5,7 @@ Team Fortress cfg files sync
 
 ## HOW TO SETUP
 
-**Requirements: **
+**Requirements:**
 - [Git client](https://git-scm.com/downloads): if you wish push changes back to remote repository, otherwise just download the project (zip compressed)
 - [Bitbucket](bitbucket.org/), [Github](github.com) (recommend) account or whatever like that
 - [Python v3.7+](https://www.python.org/downloads/)
