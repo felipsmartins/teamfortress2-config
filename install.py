@@ -9,7 +9,7 @@ import argparse
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
-def install(tf2_path):
+def install(tf2_path: str) -> None:
     cfg_src_dir = os.path.join(SCRIPT_DIR, "TeamFortress2", "cfg")
     cfg_dest_dir = os.path.join(tf2_path, "cfg")
 
@@ -54,4 +54,5 @@ if __name__ == "__main__":
     tfdir = os.path.join(args.steamapps_dir, "common", "Team Fortress 2", "tf")
 
     install(tfdir)
+    print("ALL DONE!")
     sys.exit(os.EX_OK)
