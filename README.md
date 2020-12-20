@@ -22,6 +22,12 @@ git clone git@github.com:felipsmartins/teamfortress2-config.git
 python3 teamfortress2-config/install.py
 ```
 
+_Output example_: 
+
+![output](doc/output.png)
+
+
+
 ## TODO:
 
 - Dropbox integration
