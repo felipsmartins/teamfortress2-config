@@ -18,8 +18,21 @@ git clone git@github.com:felipsmartins/teamfortress2-config.git
 ```
 
 ## HOW TO RUN
+
 ```bash
-python3 teamfortress2-config/install.py
+$ python3 teamfortress2-config/install.py --help
+usage: install.py [-h] steamapps_dir
+
+Sync files to Team Fortress directory
+
+positional arguments:
+  steamapps_dir  Absolute path to 'steamapps' directory
+
+optional arguments:
+  -h, --help     show this help message and exit
+
+# then:
+$ python3 teamfortress2-config/install.py ~/.steam/steam/steamapps
 ```
 
 _Output example_: 
