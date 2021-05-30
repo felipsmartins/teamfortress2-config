@@ -56,4 +56,4 @@ if __name__ == "__main__":
 
     install(tfdir)
     print("ALL DONE!")
-    sys.exit(os.EX_OK)
+    sys.exit(0)
