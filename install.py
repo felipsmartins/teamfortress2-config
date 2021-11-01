@@ -3,37 +3,35 @@
 import os
 import sys
 import shutil
-from glob import glob
-import subprocess
 import argparse
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+nocopy_files = [
+    "sensitivedata.cfg"
+]
+
+# TODO: add windows paths
+STEAMAPPS_DIR_COMMON_PATHS = [
+    os.path.expanduser("~/.local/share/Steam/steamapps"),
+    os.path.expanduser("~/.steam/steamapps"),
+]
 
 
-def install(tf2_path: str) -> None:
+def install(tf2_path: str, options: argparse.Namespace) -> None:
     cfg_src_dir = os.path.join(SCRIPT_DIR, "TeamFortress2", "cfg")
     cfg_dest_dir = os.path.join(tf2_path, "cfg")
-
     files = os.listdir(cfg_src_dir)
+    ignored = nocopy_files
 
-    for basename in files:
-        path = os.path.join(cfg_src_dir, basename)
-        destpath = os.path.join(cfg_dest_dir, basename)
+    if options.copy_ignored:
+        ignored = []
 
-        if os.path.isdir(path):
-            if os.path.exists(destpath):
-                print("destination directory exists, replacing {}".format(destpath))
-                shutil.rmtree(destpath)
+    for configfile in files:
+        path = os.path.join(cfg_src_dir, configfile)
+        destpath = os.path.join(cfg_dest_dir, configfile)
 
-            print("copying directory: {} -> {}".format(path, destpath))
-            shutil.copytree(path, destpath)
-
-        if os.path.isfile(path):
-            if os.path.exists(destpath):
-                print("destination file exists, replacing {}".format(destpath))
-                os.remove(destpath)
-
-            print('copying file: "{} -> {}"'.format(path, destpath))
+        if configfile not in ignored:
+            print('copying/replacing file: "{} -> {}"'.format(path, destpath))
             shutil.copyfile(path, destpath)
 
 
@@ -41,19 +39,29 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Sync files to Team Fortress directory")
     parser.add_argument(
-        "steamapps_dir", help="Absolute path to 'steamapps' directory")
+        "-d", "--steamapps-dir", help="Absolute path to 'steamapps' directory")
+    parser.add_argument(
+        "-c", "--copy-ignored", help="copy ignored files", action="store_true")
     args = parser.parse_args()
 
-    if not os.path.isdir(args.steamapps_dir):
-        print("ERR: directory not found: {}".format(
-            args.steamapps_dir))
+    steamapps_dir = None
+
+    if args.steamapps_dir:
+        steamapps_dir = args.steamapps_dir
+    else:
+        print("--steamapps-dir not provided, trying common paths...")
+
+        for trypath in STEAMAPPS_DIR_COMMON_PATHS:
+            if os.path.isdir(trypath):
+                steamapps_dir = trypath
+                break
+
+    if not os.path.isdir(steamapps_dir):
+        print("ERR: directory not found: {}".format(steamapps_dir))
         sys.exit(0)
 
-     # i.e:
-     #  ~/.steam/steam/steamapps/common/Team Fortress 2/tf
-     # ~/.steam/debian-installation/steamapps/common/Team Fortress 2/tf
-    tfdir = os.path.join(args.steamapps_dir, "common", "Team Fortress 2", "tf")
+    tfdir = os.path.join(steamapps_dir, "common", "Team Fortress 2", "tf")
 
-    install(tfdir)
+    install(tfdir, args)
     print("ALL DONE!")
     sys.exit(0)
