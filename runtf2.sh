@@ -8,7 +8,7 @@ GAME_ID=440
 # https://developer.valvesoftware.com/wiki/Command_Line_Options#Steam_.28Windows.29
 # obs.: se deixar no steam client (launch options do game) deveria funcionar tambem
 
-LAUNCH_OPTIONS="SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0 -full -novid -nojoy -nostartupsound"
+LAUNCH_OPTIONS="SDL_VIDEO_MINIMIZE_ON_FOCUS_LOSS=0 -novid -nojoy -nosteamcontroller -nohltv -particles 1 -precachefontchars -noquicktime -nostartupsound"
 
 sudo cpupower frequency-set -g performance
 /usr/bin/nvidia-settings -a '[gpu:0]/GPUPowerMizerMode=1'
