@@ -4,17 +4,27 @@ import os
 import sys
 import shutil
 import argparse
+import platform
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-nocopy_files = [
-    "sensitivedata.cfg"
-]
+nocopy_files = ["sensitivedata.cfg"]
+STEAMAPPS_DIR_COMMON_PATHS = {
+    "nix": [
+        os.path.expanduser("~/.local/share/Steam/steamapps"),
+        os.path.expanduser("~/.steam/steamapps"),
+    ],
+    "windows": [
+        os.path.join(os.environ["ProgramFiles(x86)"], "Steam", "steamapps"),
+        os.path.join(os.environ["ProgramFiles"], "Steam", "steamapps"),
+    ],
+}
 
-# TODO: add windows paths
-STEAMAPPS_DIR_COMMON_PATHS = [
-    os.path.expanduser("~/.local/share/Steam/steamapps"),
-    os.path.expanduser("~/.steam/steamapps"),
-]
+
+def get_steamapps_common_paths():
+    if platform.system() == "Windows":
+        return STEAMAPPS_DIR_COMMON_PATHS["windows"]
+
+    return STEAMAPPS_DIR_COMMON_PATHS["nix"]
 
 
 def install(tf2_path: str, options: argparse.Namespace) -> None:
@@ -37,13 +47,15 @@ def install(tf2_path: str, options: argparse.Namespace) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Sync files to Team Fortress directory")
+        description="Sync files to Team Fortress directory"
+    )
     parser.add_argument(
-        "-d", "--steamapps-dir", help="Absolute path to 'steamapps' directory")
+        "-d", "--steamapps-dir", help="Absolute path to 'steamapps' directory"
+    )
     parser.add_argument(
-        "-c", "--copy-ignored", help="copy ignored files", action="store_true")
+        "-c", "--copy-ignored", help="copy ignored files", action="store_true"
+    )
     args = parser.parse_args()
-
     steamapps_dir = None
 
     if args.steamapps_dir:
@@ -51,7 +63,7 @@ if __name__ == "__main__":
     else:
         print("--steamapps-dir not provided, trying common paths...")
 
-        for trypath in STEAMAPPS_DIR_COMMON_PATHS:
+        for trypath in get_steamapps_common_paths():
             if os.path.isdir(trypath):
                 steamapps_dir = trypath
                 break
@@ -64,4 +76,4 @@ if __name__ == "__main__":
 
     install(tfdir, args)
     print("ALL DONE!")
-    sys.exit(0)
+    sys.exit(os.EX_OK)
