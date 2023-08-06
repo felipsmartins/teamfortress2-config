@@ -5,26 +5,32 @@ import sys
 import shutil
 import argparse
 import platform
+from typing import Union
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 nocopy_files = ["sensitivedata.cfg"]
-STEAMAPPS_DIR_COMMON_PATHS = {
-    "nix": [
+
+
+def get_steamapps_common_paths() -> list:
+    system = platform.system().lower()
+
+    if system == "windows":
+        return [
+            os.path.join(os.environ["ProgramFiles(x86)"], "Steam", "steamapps"),
+            os.path.join(os.environ["ProgramFiles"], "Steam", "steamapps"),
+        ]
+
+    # Linux
+    return [
         os.path.expanduser("~/.local/share/Steam/steamapps"),
         os.path.expanduser("~/.steam/steamapps"),
-    ],
-    "windows": [
-        os.path.join(os.environ["ProgramFiles(x86)"], "Steam", "steamapps"),
-        os.path.join(os.environ["ProgramFiles"], "Steam", "steamapps"),
-    ],
-}
+    ]
 
 
-def get_steamapps_common_paths():
-    if platform.system() == "Windows":
-        return STEAMAPPS_DIR_COMMON_PATHS["windows"]
-
-    return STEAMAPPS_DIR_COMMON_PATHS["nix"]
+def find_steamapps_dir() -> Union[str, None]:
+    for trypath in get_steamapps_common_paths():
+        if os.path.isdir(trypath):
+            return trypath
 
 
 def install(tf2_path: str, options: argparse.Namespace) -> None:
@@ -56,17 +62,12 @@ if __name__ == "__main__":
         "-c", "--copy-ignored", help="copy ignored files", action="store_true"
     )
     args = parser.parse_args()
-    steamapps_dir = None
 
     if args.steamapps_dir:
         steamapps_dir = args.steamapps_dir
     else:
         print("--steamapps-dir not provided, trying common paths...")
-
-        for trypath in get_steamapps_common_paths():
-            if os.path.isdir(trypath):
-                steamapps_dir = trypath
-                break
+        steamapps_dir = find_steamapps_dir()
 
     if not os.path.isdir(steamapps_dir):
         print("ERR: directory not found: {}".format(steamapps_dir))
