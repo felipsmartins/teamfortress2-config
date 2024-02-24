@@ -17,14 +17,12 @@ commands_config = {
     "demoman.cfg": {
         "base": [
             "exec reset",
-            'unbind "E"',
             "viewmodel_fov 60",
         ],
     },
     "soldier": {
         "base": [
             "exec reset",
-            'unbind "E"',
             "viewmodel_fov 60",
         ],
         "linux": [
